@@ -38,6 +38,9 @@ class Card:
     def __str__(self):
         return f"Card: {self.face_value} of {self.group}"
 
+    def __eq__(self, other):
+        return self.face_value == other.face_value and self.group == other.group
+
 
 class FaceCard(Card):
     def __init__(self, group, face):
@@ -62,11 +65,20 @@ class Deck(list):
             self.deck.append(FaceCard(card_group[i], "Q"))
             self.deck.append(FaceCard(card_group[i], "K"))
 
+    def __iter__(self):
+        return iter(self.deck)
+
     def __len__(self):
         return len(self.deck)
 
     def __getitem__(self, item):
         return self.deck[item]
+
+    def remove(self, object):
+        for i in range(len(self.deck)):
+            if self.deck[i] == object:
+                del self.deck[i]
+                break
 
 
 # creates a player object which in this will be the human player
@@ -103,6 +115,8 @@ def draw_cards(deck_temp):
     random.seed()
     card2 = random.choice(deck_temp)
     cards = [card1, card2]
+    deck_temp.remove(card1)
+    deck_temp.remove(card2)
     return cards
 
 
@@ -117,7 +131,9 @@ class Dealer:
 # draws a random card from the deck
 def hit(deck_temp):
     random.seed()
-    return random.choice(deck_temp)
+    card = random.choice(deck_temp)
+    deck_temp.remove(card)
+    return card
 
 
 # print the deck which is taken as an argument
@@ -300,6 +316,7 @@ while True:
     print("\nDealer has: ")
     show(comp_dealer_cards)
     print("\nDEALER'S HAND: ")
+
     # optional feature below
     # if total_sum(comp_dealer_cards) < 16:
     #     print(f"{player1.name} wins as total of dealer's cards is less than 16")
